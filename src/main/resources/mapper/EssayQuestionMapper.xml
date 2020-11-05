@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.gdpi.course.mapper.EssayQuestionMapper">
+    <select id="findById" parameterType="Integer" resultType="essayQuestion">
+        SELECT * FROM essay_question WHERE id = #{id}
+    </select>
+
+    <select id="findByCourseId" parameterType="Integer" resultType="essayQuestion">
+        SELECT * FROM essay_question WHERE course_id = #{cid}
+    </select>
+
+    <select id="findByIdAndCourseId" resultType="essayQuestion">
+        SELECT * FROM essay_question WHERE course_id = #{cid} AND id = #{id}
+    </select>
+
+    <update id="updateById" parameterType="essayQuestion">
+        UPDATE essay_question SET title = #{title} WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="Integer">
+        DELETE FROM essay_question WHERE id = #{id}
+    </delete>
+
+    <insert id="addEssayQuestion" parameterType="essayQuestion" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO essay_question(course_id, title, grade) VALUES(#{courseId}, #{title}, #{grade})
+    </insert>
+
+    <select id="findGradeLessThan" resultType="essayQuestion">
+        SELECT * FROM essay_question WHERE grade &lt;= #{grade} AND course_id = #{cid}
+    </select>
+
+    <select id="findReferenceNum" parameterType="Integer" resultType="integer">
+        SELECT count(*) FROM paper_essay_map  WHERE essay_id = #{id}
+    </select>
+
+
+    <select id="findByPid" parameterType="Integer" resultType="essayQuestion">
+        SELECT s.*, s2.user_answer, s2.user_grade FROM essay_question s, paper_essay_map s2
+        WHERE s.id IN(SELECT essay_id FROM paper_essay_map WHERE paper_id = #{pid})
+        AND (s.id = s2.essay_id AND #{pid} = s2.paper_id)
+    </select>
+
+</mapper>

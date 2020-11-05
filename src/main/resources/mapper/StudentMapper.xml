@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.gdpi.course.mapper.StudentMapper">
+    <insert id="addStudent" parameterType="student" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO student(username, nickname, password, photo)
+        VALUES(#{username}, #{nickname}, #{password}, #{photo})
+    </insert>
+
+    <select id="findByUsername" parameterType="string" resultType="student">
+        SELECT * FROM student WHERE username = #{username}
+    </select>
+
+    <select id="findCourseBySId" parameterType="Integer" resultMap="#.courseWithTeacher">
+        SELECT c.* FROM course c JOIN stu_course_map s ON c.id = s.course_id AND stu_id = #{stuId}
+    </select>
+
+    <select id="findCourse" resultMap="#.courseWithTeacher">
+        SELECT * from course WHERE id NOT IN(select course_id from stu_course_map where #{sid} = stu_id) AND (`name` LIKE #{key} OR `number` LIKE #{key})
+    </select>
+
+    <select id="personalizedCourse" resultMap="#.courseWithTeacher">
+        SELECT * from course WHERE id NOT IN(select course_id from stu_course_map where #{sid} = stu_id)
+        AND (`type` IN (select distinct type from course,stu_course_map where #{sid} = stu_course_map.stu_id AND stu_course_map.course_id = course.id))
+    </select>
+    
+    <select id="personalizedAllCourse" resultMap="#.courseWithTeacher">
+        SELECT * FROM course
+    </select>
+
+    <select id="findBySidAndCourseId" resultType="Integer">
+        SELECT count(*) FROM stu_course_map WHERE stu_id = #{sid} AND course_id = #{cid}
+    </select>
+
+    <insert id="insertJoinCourse">
+        INSERT INTO stu_course_map(stu_id, course_id) VALUES(#{sid}, #{cid})
+    </insert>
+
+    <select id="findById" resultType="student" parameterType="integer">
+        SELECT * FROM student WHERE id = #{id}
+    </select>
+
+    <update id="updateById" parameterType="student">
+        UPDATE student SET username = #{username}, nickname = #{nickname}, password = #{password},
+        photo = #{photo}, email = #{email}, phone = #{phone} WHERE id = #{id}
+    </update>
+
+</mapper>

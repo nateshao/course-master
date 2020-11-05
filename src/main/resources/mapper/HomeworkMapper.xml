@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.gdpi.course.mapper.HomeworkMapper">
+    <insert id="addHomeWork" parameterType="homework" useGeneratedKeys="true" keyProperty="id">
+        INSERT  INTO homework(course_id, grade, content, start_time, end_time, title)
+        VALUES (#{courseId}, #{grade}, #{content}, #{startTime}, #{endTime}, #{title})
+    </insert>
+
+    <insert id="addHomeworkForStu">
+        INSERT INTO stu_homework_answer(homework_id, stu_id) VALUES (#{hid}, #{sid})
+    </insert>
+
+    <select id="findByCourseId" parameterType="Integer" resultMap="#.homeworkAndSubmitNum">
+        SELECT * FROM homework WHERE course_id = #{id}
+    </select>
+
+    <select id="countSubmitNum" parameterType="Integer" resultType="Integer">
+        SELECT count(*) submit_num FROM stu_homework_answer WHERE homework_id = #{id} AND answer != ''
+    </select>
+
+    <delete id="deleteById" parameterType="int">
+        DELETE FROM homework WHERE id = #{id}
+    </delete>
+
+    <select id="findById" parameterType="int" resultType="homework">
+        SELECT * FROM homework WHERE id = #{id}
+    </select>
+
+    <select id="findByHomeworkId" resultMap="#.homeworkAndStu">
+        SELECT * FROM stu_homework_answer WHERE homework_id = #{id}
+    </select>
+
+    <select id="findStuHomeworkById" resultMap="#.homeworkAndStuAndTitle">
+        SELECT * FROM stu_homework_answer WHERE id = #{id}
+    </select>
+
+    <update id="updateGradeById" parameterType="studentHomework">
+        UPDATE stu_homework_answer SET grade = #{grade} WHERE id = #{id}
+    </update>
+
+    <select id="findByCid" parameterType="int" resultType="homework">
+        SELECT * FROM homework WHERE id IN(SELECT id FROM homework WHERE course_id = #{cid} AND start_time &lt; now())
+    </select>
+
+    <select id="findSubmit" resultType="homework">
+        SELECT * FROM homework WHERE course_id = #{cid} AND id IN(SELECT homework_id FROM stu_homework_answer WHERE stu_id = #{sid} AND answer != '')
+    </select>
+    <select id="findOverdue" resultType="homework">
+        SELECT * FROM homework WHERE course_id = #{cid} AND end_time &lt; now() AND id IN(SELECT homework_id FROM stu_homework_answer WHERE stu_id = #{sid})
+    </select>
+
+    <select id="findByCourseIdForStu" resultType="homework">
+        SELECT * FROM homework WHERE course_id = #{cid}  AND start_time &lt; now() AND id IN(SELECT homework_id FROM stu_homework_answer WHERE stu_id = #{sid})
+    </select>
+
+    <select id="findByHomeworkIdAndStuId" resultType="studentHomework">
+        SELECT * FROM stu_homework_answer WHERE homework_id = #{hid} AND stu_id = #{sid}
+    </select>
+
+    <update id="updateHomework" parameterType="studentHomework">
+        UPDATE stu_homework_answer SET answer = #{answer}, update_time = now() WHERE id = #{id}
+    </update>
+
+    <delete id="deleteByAllForStu">
+        DELETE FROM stu_homework_answer WHERE stu_id = #{sid} AND homework_id IN(SELECT id FROM homework WHERE course_id = #{cid})
+    </delete>
+
+    <select id="findAllHomework" resultMap="#.homeworkAndStuAndTitle">
+        SELECT * FROM stu_homework_answer WHERE stu_id = #{sid} AND homework_id IN(SELECT id FROM homework WHERE course_id = #{cid})
+    </select>
+
+
+    <select id="findByHomeworkByCid" resultMap="#.allHomework">
+        SELECT * FROM homework WHERE course_id = #{cid}
+    </select>
+
+
+</mapper>

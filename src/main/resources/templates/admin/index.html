@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base id="base" href="/course/">
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+    <script>
+        function getContextPath() {
+            var pathName = document.location.pathname;
+            var index = pathName.substr(1).indexOf("/");
+            var result = pathName.substr(0, index + 1);
+            return result + '/';
+        }
+
+        document.getElementById('base').href = getContextPath();
+    </script>
+    <link rel="icon" th:href="@{/favicon.ico}" href="../../static/favicon.ico" type="image/x-icon">
+
+    <title>课程管理后台</title>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" th:href="@{/plugins/fontawesome-free/css/all.min.css}" href="../../static/plugins/fontawesome-free/css/all.min.css"/>
+    <!-- Theme style -->
+    <link rel="stylesheet" th:href="@{/css/adminlte.min.css}" href="../../static/css/adminlte.min.css"/>
+    <style>
+        li {
+            list-style-type:none;
+        }
+    </style>
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+    <!-- Navbar -->
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+        <!-- Left navbar links -->
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" data-widget="pushmenu" href="#" role="button"
+                ><i class="fas fa-bars"></i
+                ></a>
+            </li>
+        </ul>
+    </nav>
+    <!-- /.navbar -->
+
+    <!-- Main Sidebar Container -->
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <!-- Brand Logo -->
+        <a href="" class="brand-link">
+            <img
+                    src="http://s9.rr.itc.cn/r/wapChange/20173_22_10/a4j8hr1496179249690.jpg"
+                    class="brand-image img-circle elevation-3"
+                    style="opacity: 0.8;"
+            />
+            <span class="brand-text font-weight-light">课程管理</span>
+        </a>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Sidebar user panel (optional) -->
+            <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                <div class="image">
+                    <img
+                            src="http://s9.rr.itc.cn/r/wapChange/20173_22_10/a4j8hr1496179249690.jpg"
+                            class="img-circle elevation-2"
+                            alt="User Image"
+                            id="head-img"
+                    />
+                </div>
+                <div class="info">
+                    <a href="javascript:void(0)" class="d-block" id="nickname"></a>
+                </div>
+            </div>
+
+            <!-- Sidebar Menu -->
+            <nav class="mt-2">
+                <ul
+                        class="nav nav-pills nav-sidebar flex-column"
+                        data-widget="treeview"
+                        role="menu"
+                        data-accordion="false"
+                >
+                    <!-- 课程公告 -->
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link menu1" onclick="menuActive(1)">
+                            <i class="fas fa-bullhorn nav-icon"></i>
+                            <p>
+                                课程公告
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a th:href="@{/admin/advice.html}" href="../../static/admin/advice.html" class="nav-link menu1-1 myitem" onclick="itemActive('1-1')" target="menuFrame">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>发布公告</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- 课程管理 -->
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link menu2" onclick="menuActive(2)">
+                            <i class="nav-icon fas fa-book"></i>
+                            <p>
+                                课程管理
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a th:href="@{/admin/course-list.html}" href="../../static/admin/course-list.html" target="menuFrame" class="nav-link menu2-1 myitem" onclick="itemActive('2-1')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>课程列表</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a th:href="@{/tea/addCourse}" href="course-add.html" target="menuFrame" class="nav-link menu2-2 myitem" onclick="itemActive('2-2')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>创建课程</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- 学员管理 -->
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link menu3" onclick="menuActive(3)">
+                            <i class="nav-icon fas fa-users"></i>
+                            <p>
+                                学员管理
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a th:href="@{/admin/student-list.html}" href="../../static/admin/student-list.html" target="menuFrame" class="nav-link menu3-1 myitem" onclick="itemActive('3-1')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>学员列表</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- 题库管理 -->
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link menu4" onclick="menuActive(4)">
+                            <i class="nav-icon fas fa-server"></i>
+                            <p>
+                                题库管理
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a th:href="@{/admin/single-question-list.html}" href="../../static/admin/single-question-list.html" target="menuFrame" class="nav-link menu4-1 myitem" onclick="itemActive('4-1')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>选择题</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a th:href="@{/admin/gap-filling-list.html}" href="../../static/admin/gap-filling-list.html" target="menuFrame" class="nav-link menu4-2 myitem" onclick="itemActive('4-2')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>填空题</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a th:href="@{/admin/true-of-false-list.html}" href="../../static/admin/true-of-false-list.html" target="menuFrame" class="nav-link menu4-3 myitem" onclick="itemActive('4-3')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>判断题</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a th:href="@{/admin/essay-question-list.html}" href="../../static/admin/essay-question-list.html" target="menuFrame" class="nav-link menu4-4 myitem" onclick="itemActive('4-4')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>问答题</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- 测验管理 -->
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link menu5" onclick="menuActive(5)">
+                            <i class="nav-icon fas fa-pencil-alt"></i>
+                            <p>
+                                测验管理
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a th:href="@{/admin/exam-list.html}" href="../../static/admin/exam-list.html" target="menuFrame" class="nav-link menu5-1 myitem" onclick="itemActive('5-1')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>测验列表</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a th:href="@{/admin/exam-add.html}" href="../../static/admin/exam-add.html" target="menuFrame" class="nav-link menu5-2 myitem" onclick="itemActive('5-2')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>发布测验</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- 作业管理 -->
+                    <li class="nav-item has-treeview ">
+                        <a href="#" class="nav-link menu6" onclick="menuActive(6)">
+                            <i class="nav-icon fas fa-stream"></i>
+                            <p>
+                                作业管理
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a th:href="@{/admin/homework-list.html}" href="../../static/admin/homework-list.html" target="menuFrame" class="nav-link menu6-1 myitem" onclick="itemActive('6-1')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>作业列表</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a th:href="@{/admin/homework-add.html}" href="../../static/admin/homework-add.html" target="menuFrame" class="nav-link menu6-2 myitem" onclick="itemActive('6-2')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>发布作业</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </aside>
+
+
+    <div class="content-wrapper">
+        <div class="content">
+            <div class="container-fluid">
+                <iframe
+                        id="menuFrame"
+                        name="menuFrame"
+                        scrolling="yes"
+                        frameborder="no"
+                        height="100%"
+                        width="100%"
+                        th:src="@{/admin/chart.html}"
+                        src="../../static/admin/chart.html"
+                >
+                </iframe>
+            </div>
+        </div>
+    <aside class="control-sidebar control-sidebar-dark">
+        <div class="p-3">
+            <h5>Title</h5>
+            <p>Sidebar content</p>
+        </div>
+    </aside>
+</div>
+
+</div>
+</body>
+<script th:src="@{/plugins/jquery/jquery.min.js}" src="../../static/plugins/jquery/jquery.min.js"></script>
+<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}" src="../../static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/adminlte.min.js}" src="../../static/js/adminlte.min.js"></script>
+<script th:src="@{/js/axios.min.js}" src="../../static/js/axios.min.js"></script>
+<script>
+    $("#menuFrame").height(window.innerHeight - 90);
+
+    function menuActive(id) {
+        $('.menu'+id).toggleClass('active');
+    }
+    function itemActive(id) {
+        $('.myitem').removeClass('active');
+        $('.menu'+id).addClass('active');
+    }
+
+    axios.get(getContextPath()+'tea/admin')
+        .then(rep => {
+            if (rep.data.code === 200) {
+                $('#head-img').attr('src',rep.data.data.photo);
+                $('#nickname').text(rep.data.data.nickname);
+            } else {
+                console.log('查询失败');
+            }
+        })
+</script>
+
+<script>
+
+</script>
+
+</html>

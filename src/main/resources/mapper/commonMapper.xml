@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="#">
+    <resultMap id="baseCourse" type="course">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="cover" property="cover"/>
+        <result column="tea_id" property="teaId"/>
+        <result column="number" property="number"/>
+        <result column="time" property="time"/>
+        <result column="description" property="description"/>
+    </resultMap>
+
+    <resultMap id="courseWithTeacher" extends="baseCourse" type="course">
+        <association property="teacher" javaType="teacher" column="tea_id" select="org.gdpi.course.mapper.TeacherMapper.findById"/>
+    </resultMap>
+
+    <resultMap id="courseWithStuCount" extends="baseCourse" type="course">
+        <association property="stuNum" javaType="integer" column="id"  select="org.gdpi.course.mapper.CourseMapper.findStudentCount"/>
+    </resultMap>
+
+    <resultMap id="gradeWithStudent" type="gradeTable">
+        <id column="id" property="id"/>
+        <result column="stu_id" property="stuId"/>
+        <result column="course_id" property="courseId"/>
+        <result column="grade" property="grade"/>
+        <result column="regular_grade" property="regularGrade"/>
+        <result column="time" property="time"/>
+        <association property="student" javaType="student" column="stu_id"  select="org.gdpi.course.mapper.StudentMapper.findById"/>
+    </resultMap>
+
+    <resultMap id="modelAndSubmitNum" type="examModel">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="grade" property="grade"/>
+        <result column="time" property="time"/>
+        <result column="is_hide" property="isHide"/>
+        <association property="submitNum" javaType="integer" column="id"  select="org.gdpi.course.mapper.ExamMapper.findSubmitNum"/>
+    </resultMap>
+
+    <resultMap id="basePaper" type="examPaper">
+        <id column="id" property="id"/>
+        <result column="stu_id" property="stuId"/>
+        <result column="model_id" property="modelId"/>
+        <result column="grade" property="grade"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <resultMap id="paperAndStu" type="examPaper" extends="basePaper">
+        <association property="student" javaType="student" column="stu_id"  select="org.gdpi.course.mapper.StudentMapper.findById"/>
+    </resultMap>
+
+    <resultMap id="paperAndModle" type="examPaper" extends="basePaper">
+        <association property="examModel" javaType="examModel" column="model_id"  select="org.gdpi.course.mapper.ExamMapper.findById"/>
+    </resultMap>
+    <!--查询试卷及用户答案-->
+    <resultMap id="paperAndQue" extends="basePaper" type="examPaper">
+        <collection property="singleQues" ofType="singleQuestion" column="id" select="org.gdpi.course.mapper.SingleQuestionMapper.findByPid"/>
+        <collection property="torfQues" ofType="trueOrFalseQuestion" column="id" select="org.gdpi.course.mapper.TrueOrFalseQuestionMapper.findByPid"/>
+        <collection property="gapQues" ofType="gapFillingQuestion" column="id" select="org.gdpi.course.mapper.GapFillingQuestionMapper.findByPid"/>
+        <collection property="essayQues" ofType="essayQuestion" column="id" select="org.gdpi.course.mapper.EssayQuestionMapper.findByPid"/>
+    </resultMap>
+
+    <resultMap id="baseQue" type="question">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="grade" property="grade"/>
+        <result column="time" property="time"/>
+        <result column="course_id" property="course_id"/>
+    </resultMap>
+
+    <resultMap id="baseHomework" type="homework">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="courseId" column="course_id"/>
+        <result property="time" column="time"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="grade" column="grade"/>
+    </resultMap>
+
+    <resultMap id="allHomework" type="homework" extends="baseHomework">
+        <collection property="studentHomeworks" column="id" select="org.gdpi.course.mapper.HomeworkMapper.findByHomeworkId"/>
+    </resultMap>
+
+
+    <resultMap id="homeworkAndSubmitNum" type="homework" extends="baseHomework">
+        <association property="submitNum" column="id" select="org.gdpi.course.mapper.HomeworkMapper.countSubmitNum"/>
+    </resultMap>
+
+    <resultMap id="baseStudentHomework" type="studentHomework">
+        <id property="id" column="id"/>
+        <result property="homeworkId" column="homework_id"/>
+        <result property="stuId" column="stu_id"/>
+        <result property="answer" column="answer"/>
+        <result property="grade" column="grade"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="time" column="time"/>
+    </resultMap>
+    <resultMap id="homeworkAndStu" type="studentHomework" extends="baseStudentHomework">
+        <association property="student" javaType="student" column="stu_id" select="org.gdpi.course.mapper.StudentMapper.findById"/>
+    </resultMap>
+    <resultMap id="homeworkAndStuAndTitle" type="studentHomework" extends="baseStudentHomework">
+        <association property="student" javaType="student" column="stu_id" select="org.gdpi.course.mapper.StudentMapper.findById"/>
+        <association property="homework" javaType="homework" column="homework_id" select="org.gdpi.course.mapper.HomeworkMapper.findById"/>
+    </resultMap>
+
+    
+    <resultMap id="courseAndHomework" type="course" extends="baseCourse">
+        <collection property="homework" ofType="homework" column="id" select="org.gdpi.course.mapper.HomeworkMapper.findByCid"/>
+    </resultMap>
+
+    <resultMap id="homeworkDetail" type="homework" extends="baseHomework">
+        <association property="studentHomework" column="id" select="org.gdpi.course.mapper.HomeworkMapper.findStuHomeworkById"/>
+    </resultMap>
+
+    <resultMap id="baseResource" type="resource">
+        <id property="id" column="id"/>
+        <result property="description" column="description"/>
+        <result property="size" column="size"/>
+        <result property="path" column="path"/>
+        <result property="time" column="time"/>
+    </resultMap>
+
+    <resultMap id="stuResource" type="studentResource" extends="baseResource">
+        <result property="stuId" column="stu_id"/>
+        <association property="user" column="stu_id" javaType="student" select="org.gdpi.course.mapper.StudentMapper.findById"/>
+        <association property="course" column="course_id" javaType="course" select="org.gdpi.course.mapper.CourseMapper.findById"/>
+    </resultMap>
+
+    <resultMap id="teaResource" type="teacherResource" extends="baseResource">
+        <result property="teaId" column="tea_id"/>
+        <association property="user" column="tea_id" javaType="teacher" select="org.gdpi.course.mapper.TeacherMapper.findById"/>
+        <association property="course" column="course_id" javaType="course" select="org.gdpi.course.mapper.CourseMapper.findById"/>
+    </resultMap>
+
+
+    <resultMap id="baseInvitation" type="invitation">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="courseId" column="course_id"/>
+        <result property="time" column="time"/>
+    </resultMap>
+
+    <resultMap id="invitationAndStuAndCourse" type="studentInvitation" extends="baseInvitation">
+        <result property="stuId" column="stu_id"/>
+        <association property="course" column="course_id" javaType="course" select="org.gdpi.course.mapper.CourseMapper.findById"/>
+        <association property="user" javaType="student" column="stu_id" select="org.gdpi.course.mapper.StudentMapper.findById"/>
+    </resultMap>
+
+    <resultMap id="invitationAndTeaAndCourse" type="teacherInvitation" extends="baseInvitation">
+        <result property="stuId" column="stu_id"/>
+        <association property="course" column="course_id" javaType="course" select="org.gdpi.course.mapper.CourseMapper.findById"/>
+        <association property="user" javaType="teacher" column="tea_id" select="org.gdpi.course.mapper.TeacherMapper.findById"/>
+    </resultMap>
+
+    <resultMap id="noticeAndCourse" type="notice">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="courseId" column="course_id"/>
+        <result property="time" column="time"/>
+        <result property="overdueTime" column="overdue_time"/>
+        <association property="course" column="course_id" javaType="course" select="org.gdpi.course.mapper.CourseMapper.findById"/>
+    </resultMap>
+</mapper>
